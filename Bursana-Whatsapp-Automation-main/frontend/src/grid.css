@@ -1,0 +1,10 @@
+.grid-bg {
+  --grid-size: 32px;
+  --grid-color: rgba(112, 111, 111, 0.08);
+
+  background-color: #fafafa;
+  background-image:
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+}
