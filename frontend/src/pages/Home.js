@@ -69,8 +69,11 @@ function CustomerLayout({ bannerLogoUrl, user, onLogin }) {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [authModalMode, setAuthModalMode] = useState("login");
+
   const isAuthenticated = Boolean(user);
   const { showAlert } = useAlert();
+
+  /* ---------- LOGIN POPUP FUNCTIONS ---------- */
 
   const openLoginPopup = useCallback(() => {
     setAuthModalMode("login");
@@ -80,6 +83,21 @@ function CustomerLayout({ bannerLogoUrl, user, onLogin }) {
   const closeLoginPopup = useCallback(() => {
     setShowLoginPopup(false);
   }, []);
+
+  /* ---------- LISTEN FOR LOGIN TRIGGER ---------- */
+
+  useEffect(() => {
+    const handleTriggerLogin = () => {
+      openLoginPopup();
+    };
+
+    window.addEventListener("triggerLoginModal", handleTriggerLogin);
+
+    return () =>
+      window.removeEventListener("triggerLoginModal", handleTriggerLogin);
+  }, [openLoginPopup]);
+
+  /* ---------- AUTH ---------- */
 
   const clearAuthState = useCallback(() => {
     localStorage.removeItem("user");
@@ -108,6 +126,8 @@ function CustomerLayout({ bannerLogoUrl, user, onLogin }) {
     [onLogin]
   );
 
+  /* ---------- CART COUNT ---------- */
+
   const refreshCartCount = useCallback(async () => {
     if (!isAuthenticated) {
       setCartCount(0);
@@ -117,29 +137,33 @@ function CustomerLayout({ bannerLogoUrl, user, onLogin }) {
 
     try {
       const response = await api.get("/cart");
+
       const items = Array.isArray(response.data) ? response.data : [];
+
       const totalItems = items.reduce(
         (sum, item) => sum + (parseInt(item.quantity, 10) || 0),
         0
       );
-      setCartCount(totalItems);
-    } catch {
-      // silent
-    }
 
-    // Also fetch wishlist count
+      setCartCount(totalItems);
+    } catch { }
+
     try {
       const wishlistRes = await api.get("/wishlist");
-      const wishlistItems = Array.isArray(wishlistRes.data) ? wishlistRes.data : [];
+
+      const wishlistItems = Array.isArray(wishlistRes.data)
+        ? wishlistRes.data
+        : [];
+
       setWishlistCount(wishlistItems.length);
-    } catch {
-      // silent
-    }
+    } catch { }
   }, [isAuthenticated]);
 
   useEffect(() => {
     refreshCartCount();
   }, [refreshCartCount]);
+
+  /* ---------- UI ---------- */
 
   return (
     <div style={styles.customerShell}>
@@ -149,20 +173,9 @@ function CustomerLayout({ bannerLogoUrl, user, onLogin }) {
         wishlistCount={wishlistCount}
         onCartClick={() => navigate("/cart")}
         onLogout={handleLogout}
-        showLoginPopup={showLoginPopup}
         onShowLogin={openLoginPopup}
         user={user}
       />
-
-      {/* Notice Banner - Below Navbar, Above Hero */}
-      {/* Remove this section after completion of site */}
-      <div style={styles.noticeContainer}>
-        <h1 style={styles.noticeTitle}>TAKING ORDERS SOON!</h1>
-        <h1 style={styles.noticeTitle}>JUST FOR VIEWING PLEASURE!</h1>
-        <h1 style={styles.noticeText}>HOWEVER PLEASE FEEL FREE TO CREATE AN ACCOUNT AND ADD ITEMS TO YOUR CART!</h1>
-        <h1 style={styles.noticeText}>WE SHALL NOTIFY YOU WHEN OUR SITE IS LIVE!</h1>
-      </div>
-      {/* end section for deletion */}
 
       <main style={styles.customerMain}>
         <Outlet

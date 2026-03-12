@@ -12,7 +12,12 @@ export default function WishlistPage() {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const res = await api.get("/wishlist");
+        const token = localStorage.getItem("token");
+        const res = await api.get("/wishlist", {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
+        });
         if (Array.isArray(res.data)) {
           setWishlistItems(res.data);
         }
@@ -29,7 +34,12 @@ export default function WishlistPage() {
 
   const handleRemoveFromWishlist = async (productId) => {
     try {
-      await api.delete(`/wishlist/remove/${productId}`);
+      const token = localStorage.getItem("token");
+      await api.delete(`/wishlist/remove/${productId}`, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
       setWishlistItems(prev => prev.filter(item => item.product_id !== productId));
       showAlert("Removed from wishlist", "success");
     } catch (err) {
@@ -39,7 +49,12 @@ export default function WishlistPage() {
 
   const handleAddToCart = async (productId) => {
     try {
-      await api.post("/cart/add", { product_id: productId });
+      const token = localStorage.getItem("token");
+      await api.post("/cart/add", { product_id: productId }, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
       showAlert("Added to cart!", "success");
     } catch (err) {
       showAlert("Failed to add to cart", "error");

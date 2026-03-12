@@ -56,14 +56,19 @@ export default function Header() {
       if (!storedUser) return;
 
       try {
+        const token = localStorage.getItem("token");
+        const headers = {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        };
+        
         // Fetch cart count
-        const cartRes = await api.get("/cart");
+        const cartRes = await api.get("/cart", { headers });
         const cartItems = Array.isArray(cartRes.data) ? cartRes.data : [];
         const totalCart = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0);
         setCartCount(totalCart);
 
         // Fetch wishlist count
-        const wishlistRes = await api.get("/wishlist");
+        const wishlistRes = await api.get("/wishlist", { headers });
         const wishlistItems = Array.isArray(wishlistRes.data) ? wishlistRes.data : [];
         setWishlistCount(wishlistItems.length);
       } catch (err) {
@@ -364,29 +369,21 @@ export default function Header() {
             <div className="relative">
               <button 
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-1"
-                onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                onBlur={() => setTimeout(() => setProfileMenuOpen(false), 200)}
+                onClick={() => {
+                  // Trigger login modal - dispatch event that Home.jsx listens to
+                  window.dispatchEvent(new CustomEvent('triggerLoginModal'));
+                }}
               >
                 <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
               </button>
-              {profileMenuOpen && (
-                <div className="absolute right-0 top-full mt-1 bg-white shadow-lg rounded-lg py-2 min-w-[150px] z-50">
-                  <button 
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
             </div>
           ) : (
             <button 
               onClick={() => {
-                setShowAuthModal(true);
-                switchToLogin();
+                // Trigger login modal - dispatch event that Home.jsx listens to
+                window.dispatchEvent(new CustomEvent('triggerLoginModal'));
               }}
               className="px-4 py-2 bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
             >

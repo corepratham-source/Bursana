@@ -14,7 +14,6 @@ const cookie = require("cookie");
 
 const cartRoutes = require("./routes/cartRoutes");
 const productRoutes = require("./routes/productRoutes");
-const wishlistRoutes = require("./routes/wishlistRoutes");
 const authRoutes = require("./routes/authRoutes");
 const { MessagingRouter } = require("./routes/twilioRoutes");
 const orderRoutes = require("./routes/orderRoutes");
@@ -26,30 +25,30 @@ const optionalAuth = require("./middleware/optionalAuth");
 
 /* ================= ORIGINS ================= */
 
-// Allow all origins for development (change to specific origins in production)
 const allowedOrigins = [
   "https://bursana.com",
   "https://www.bursana.com",
   "http://www.bursana.com",
   "http://localhost:3000",
-  "http://localhost:3001",
-  "https://*.railway.app",
-  "https://*.up.railway.app",
-  "https://*.vercel.app",
-  "*", // Allow all origins for development
 ];
 
 /* ================= CORS MODES ================= */
 
-// 🔓 Public (NO cookies) - Allow all origins
+// 🔓 Public (NO cookies)
 const corsPublic = cors({
-  origin: true, // Allow all origins for public endpoints
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error("CORS blocked"));
+  },
   credentials: false,
 });
 
-// 🔐 Private (cookies + CSRF) - Allow all origins
+// 🔐 Private (cookies + CSRF)
 const corsPrivate = cors({
-  origin: true, // Allow all origins for authenticated endpoints
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error("CORS blocked"));
+  },
   credentials: true,
 });
 
@@ -118,7 +117,6 @@ app.use("/csrf", corsPrivate, csrfRoutes);
 app.use("/products", corsPrivate, optionalAuth(), csrfProtection, authLimiter, productRoutes);
 app.use("/orders", corsPrivate, auth(), csrfProtection, authLimiter, orderRoutes);
 app.use("/cart", corsPrivate, auth(), csrfProtection, authLimiter, cartRoutes);
-app.use("/wishlist", corsPrivate, auth(), csrfProtection, authLimiter, wishlistRoutes);
 app.use("/ingestion", corsPrivate, auth("supplier"), csrfProtection, authLimiter, ingestRoutes);
 app.use(
   "/management/supplier",
@@ -132,7 +130,7 @@ app.use(
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins
+    origin: allowedOrigins,
     credentials: true,
   },
 });

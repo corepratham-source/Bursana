@@ -91,7 +91,12 @@ export default function Storefront() {
 
     const fetchWishlist = async () => {
       try {
-        const res = await api.get("/wishlist");
+        const token = localStorage.getItem("token");
+        const res = await api.get("/wishlist", {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
+        });
         if (Array.isArray(res.data)) {
           setWishlistItems(res.data.map(item => Number(item.product_id)));
         }
@@ -113,13 +118,22 @@ export default function Storefront() {
     }
 
     try {
+      const token = localStorage.getItem("token");
       const isInWishlist = wishlistItems.includes(Number(productId));
       if (isInWishlist) {
-        await api.delete(`/wishlist/remove/${Number(productId)}`);
+        await api.delete(`/wishlist/remove/${Number(productId)}`, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
+        });
         setWishlistItems(prev => prev.filter(id => id !== Number(productId)));
         showAlert("Removed from wishlist", "success");
       } else {
-        await api.post("/wishlist/add", { product_id: Number(productId) });
+        await api.post("/wishlist/add", { product_id: Number(productId) }, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
+        });
         setWishlistItems(prev => [...prev, Number(productId)]);
         showAlert("Added to wishlist!", "success");
       }

@@ -1,231 +1,140 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import api from "../api";
-import useAlert from "../hooks/useAlert";
-import { socket } from "../socket";
+import LoginForm from "../components/LoginForm";
+import { loginUser } from "../hooks/useAuth";
 
-export default function LoginPage({
-  onLogin,
-  goToRegister,
-  asModal = false,
-  onClose,
-}) {
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+export default function LoginPage({ role = "customer", asModal = false, onClose }) {
+
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { showAlert } = useAlert();
 
-  /* ================= LOGIN ================= */
+  const handleLogin = async ({ identifier, password }) => {
 
-  const login = async () => {
+    console.log("LOGIN BUTTON CLICKED");
+
     try {
+
       setLoading(true);
-      
-      const res = await api.post("/auth/login", {
-        identifier,
-        password,
-      });
 
-      socket.connect();
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      localStorage.setItem("mode", "customer");
-      onLogin({ ...res.data.user, mode: "customer" });
+      const data = await loginUser({ identifier, password });
 
-      showAlert("Login successful!", "success");
+      console.log("LOGIN SUCCESS:", data);
+
+      // Store token and user in localStorage
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("mode", role);
+
+      if (asModal && onClose) {
+        onClose();
+      }
+
+      if (role === "supplier") {
+        navigate("/supplier/ingest");
+      } else {
+        window.location.reload();
+      }
+
     } catch (err) {
-      showAlert(err.response?.data?.error || "Login failed");
+
+      console.error("LOGIN ERROR:", err.response?.data || err.message);
+
+      alert(err.response?.data?.error || "Login failed");
+
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
-  return (
-    <div
-      style={asModal ? modalOverlay : page}
-      onClick={asModal ? onClose : undefined}
-    >
+  // Modal rendering with improved UI
+  if (asModal) {
+    return (
       <div
-        style={asModal ? modalContainer : container}
-        onClick={asModal ? (e) => e.stopPropagation() : undefined}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0, 0, 0, 0.5)",
+          backdropFilter: "blur(4px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+        }}
+        onClick={onClose}
       >
-        {asModal && (
-          <button style={closeButton} onClick={onClose}>
+        <div
+          style={{
+            background: "white",
+            borderRadius: "12px",
+            width: "420px",
+            padding: "40px",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+            position: "relative",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              background: "none",
+              border: "none",
+              fontSize: "20px",
+              cursor: "pointer",
+              color: "#666",
+            }}
+          >
             ✕
           </button>
-        )}
 
-        <div style={header}>
-          <h2 style={title}>Welcome Back</h2>
-          <p style={subtitle}>Sign in to continue</p>
-        </div>
-
-        <div style={form}>
-          <div style={inputGroup}>
-            <label style={label}>Email or Phone</label>
-            <input
-              type="text"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              style={input}
-              placeholder="Enter your email or phone"
-            />
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <h2 style={{ margin: "0 0 8px 0", fontSize: "24px", fontWeight: "600", color: "#333" }}>
+              {role === "supplier" ? "Supplier Login" : "Customer Login"}
+            </h2>
+            <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+              Sign in to continue
+            </p>
           </div>
 
-          <div style={inputGroup}>
-            <label style={label}>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={input}
-              placeholder="Enter your password"
-            />
-          </div>
+          <LoginForm onSubmit={handleLogin} loading={loading} />
 
-          <button
-            onClick={login}
-            disabled={loading}
-            style={button}
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-
-          <p style={registerText}>
-            Don't have an account?{" "}
-            <button
-              onClick={goToRegister}
-              style={registerButton}
-            >
-              Register
-            </button>
-          </p>
         </div>
       </div>
+    );
+  }
+
+  // Full page rendering
+  return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f5f5f5" }}>
+
+      <div style={{ width: "420px" }}>
+
+        <div style={{ background: "white", borderRadius: "12px", padding: "40px", boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)" }}>
+          
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <h2 style={{ margin: "0 0 8px 0", fontSize: "24px", fontWeight: "600", color: "#333" }}>
+              {role === "supplier" ? "Supplier Login" : "Customer Login"}
+            </h2>
+            <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+              Sign in to continue
+            </p>
+          </div>
+
+          <LoginForm onSubmit={handleLogin} loading={loading} />
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-
-const page = {
-  minHeight: "100vh",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  background: "#f5f5f5",
-  padding: "20px",
-};
-
-const modalOverlay = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 1000,
-  padding: "20px",
-};
-
-const modalContainer = {
-  background: "white",
-  borderRadius: "12px",
-  padding: "32px",
-  width: "100%",
-  maxWidth: "400px",
-  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-  position: "relative",
-};
-
-const container = {
-  background: "white",
-  borderRadius: "12px",
-  padding: "32px",
-  width: "100%",
-  maxWidth: "400px",
-  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-};
-
-const closeButton = {
-  position: "absolute",
-  top: "12px",
-  right: "12px",
-  background: "none",
-  border: "none",
-  fontSize: "20px",
-  cursor: "pointer",
-  color: "#666",
-};
-
-const header = {
-  textAlign: "center",
-  marginBottom: "24px",
-};
-
-const title = {
-  margin: "0 0 8px 0",
-  fontSize: "24px",
-  fontWeight: "600",
-  color: "#333",
-};
-
-const subtitle = {
-  margin: 0,
-  fontSize: "14px",
-  color: "#666",
-};
-
-const form = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "16px",
-};
-
-const inputGroup = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "6px",
-};
-
-const label = {
-  fontSize: "14px",
-  fontWeight: "500",
-  color: "#333",
-};
-
-const input = {
-  padding: "12px",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  fontSize: "14px",
-  outline: "none",
-  transition: "border-color 0.2s",
-};
-
-const button = {
-  padding: "14px",
-  borderRadius: "8px",
-  border: "none",
-  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-  color: "white",
-  fontSize: "16px",
-  fontWeight: "600",
-  cursor: "pointer",
-  transition: "opacity 0.2s",
-};
-
-const registerText = {
-  textAlign: "center",
-  fontSize: "14px",
-  color: "#666",
-  margin: 0,
-};
-
-const registerButton = {
-  background: "none",
-  border: "none",
-  color: "#667eea",
-  fontWeight: "600",
-  cursor: "pointer",
-  fontSize: "14px",
-};

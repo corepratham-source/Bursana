@@ -30,7 +30,12 @@ export default function CustomerOrders() {
     const loadStart = Date.now();
     setIsLoading(true);
     try {
-      const res = await api.get("/orders/customer-orders");
+      const token = localStorage.getItem("token");
+      const res = await api.get("/orders/customer-orders", {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
       setOrders(res.data);
       if (res.data.length === 0) {
         showAlert("No orders found", "info");

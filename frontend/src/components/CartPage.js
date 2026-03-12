@@ -21,7 +21,12 @@ export default function CartPage() {
     const loadStart = Date.now();
     setIsLoading(true);
     try {
-      const response = await api.get("/cart");
+      const token = localStorage.getItem("token");
+      const response = await api.get("/cart", {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
       setCartItems(response.data);
     } catch {
       showAlert("Failed to fetch cart items");
@@ -37,7 +42,12 @@ export default function CartPage() {
   };
   const placeCartOrder = async () => {
     try {
-      const res = await api.post("/orders/cart");
+      const token = localStorage.getItem("token");
+      const res = await api.post("/orders/cart", {}, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
       showAlert("Order placed successfully! Suppliers notified.", "success");
       showMessage("Please note that we have multiple suppliers. You will receive separate messages from each supplier regarding your order details and delivery timelines.", "success", 40000);
       setCartItems([]);
@@ -54,9 +64,14 @@ export default function CartPage() {
 
   const updateQuantity = async (productId, change) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await api.post("/cart/update", {
         product_id: productId,
         change,
+      }, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
       });
       setCartItems(res.data);
     } catch (err) {
