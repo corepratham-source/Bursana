@@ -338,13 +338,36 @@
 // };
 
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function CustomerBanner({ bannerLogoUrl, cartCount = 0, wishlistCount = 0, onCartClick, onLogout, showLoginPopup, onShowLogin, user }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -355,8 +378,8 @@ export default function CustomerBanner({ bannerLogoUrl, cartCount = 0, wishlistC
 
   const navLinks = [
     { label: "Home", to: "/" },
-    { label: "Categories", to: "/#categories" },
-    { label: "Best Sellers", to: "/#bestsellers" },
+    { label: "Categories", to: "/categories" },
+    { label: "Best Sellers", to: "/best-sellers" },
   ];
 
   // Multicolour BURSANA exactly as in image
@@ -430,17 +453,6 @@ export default function CustomerBanner({ bannerLogoUrl, cartCount = 0, wishlistC
         {/* ── Right Icons ── */}
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
 
-          {/* Search icon */}
-          {!isMobile && (
-            <button style={iconBtn} aria-label="Search">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </button>
-          )}
-
           {/* Wishlist / Heart icon */}
           <button 
             style={{ ...iconBtn, position: "relative" }} 
@@ -494,6 +506,7 @@ export default function CustomerBanner({ bannerLogoUrl, cartCount = 0, wishlistC
           {/* User icon + dropdown - show login if not logged in */}
           {user ? (
             <div
+              ref={dropdownRef}
               style={{ position: "relative" }}
             >
               <button 
@@ -520,6 +533,12 @@ export default function CustomerBanner({ bannerLogoUrl, cartCount = 0, wishlistC
                 }}>
                   <Link to="/orders" style={dropItem} onClick={() => setMenuOpen(false)}>
                     My Orders
+                  </Link>
+                  <Link to="/wishlist" style={dropItem} onClick={() => setMenuOpen(false)}>
+                    Wishlist
+                  </Link>
+                  <Link to="/cart" style={dropItem} onClick={() => setMenuOpen(false)}>
+                    Cart
                   </Link>
                   <button style={{ ...dropItem, borderTop: "1px solid #f0f0f0" }} onClick={() => { setMenuOpen(false); onLogout(); }}>
                     Logout

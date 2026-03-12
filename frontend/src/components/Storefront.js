@@ -7,15 +7,25 @@ import HeroSection from "./HeroSection";
 import CategoryCard from "./CategoryCard";
 import ProductCard from "./ProductCard";
 
-export default function Storefront() {
+export default function Storefront(props) {
   const { showAlert } = useAlert();
   const navigate = useNavigate();
+  
+  // Get context - may be null if not available
+  const context = useOutletContext() || {};
+  
   const {
     refreshCartCount,
     isAuthenticated,
-    requireLogin,
-    handleUnauthorized,
-  } = useOutletContext();
+    requireLogin = () => {},
+    handleUnauthorized = () => {},
+  } = context;
+  
+  // If props are passed directly, use those instead
+  const actualRefreshCartCount = props?.refreshCartCount || refreshCartCount;
+  const actualIsAuthenticated = props?.isAuthenticated !== undefined ? props.isAuthenticated : isAuthenticated;
+  const actualRequireLogin = props?.requireLogin || requireLogin;
+  const actualHandleUnauthorized = props?.handleUnauthorized || handleUnauthorized;
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
@@ -353,6 +363,22 @@ export default function Storefront() {
       `}</style>
 
       <main style={styles.main}>
+        {/* Notice Banner - Remove this section after completion of site */}
+        <div style={{
+          background: "rgba(255, 255, 255, 0.9)",
+          border: "2px solid #667eea",
+          borderRadius: "12px",
+          padding: "20px",
+          margin: "10px 20px",
+          textAlign: "center",
+        }}>
+          <h1 style={{ margin: "0 0 8px 0", fontSize: "24px", fontWeight: "bold", color: "#e74c3c" }}>TAKING ORDERS SOON!</h1>
+          <h2 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "normal", color: "#e67e22" }}>JUST FOR VIEWING PLEASURE!</h2>
+          <h3 style={{ margin: 0, fontSize: "14px", color: "#34495e" }}>HOWEVER PLEASE FEEL FREE TO CREATE AN ACCOUNT AND ADD ITEMS TO YOUR CART!</h3>
+          <h3 style={{ margin: "8px 0 0 0", fontSize: "14px", color: "#2c3e50" }}>WE SHALL NOTIFY YOU WHEN OUR SITE IS LIVE!</h3>
+        </div>
+        {/* end section for deletion */}
+
         {/* Hero Banner Section */}
         <HeroSection />
 

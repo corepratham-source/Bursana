@@ -75,7 +75,7 @@ export default function CartPage() {
       });
       setCartItems(res.data);
     } catch (err) {
-      showAlert(err);
+      showAlert(err.response?.data?.error || "Failed to update quantity");
     }
   };
 

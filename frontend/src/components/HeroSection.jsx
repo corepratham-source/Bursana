@@ -1,12 +1,22 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [bannerImages, setBannerImages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasImages, setHasImages] = useState(false);
+
+  // Handle search submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    }
+  };
 
   // Fetch product images from backend using existing /products endpoint
   useEffect(() => {
@@ -199,7 +209,8 @@ export default function HeroSection() {
         </h1>
 
         {/* Search Bar */}
-        <div
+        <form
+          onSubmit={handleSearch}
           style={{
             width: "min(500px, 85vw)",
             height: 50,
@@ -212,19 +223,21 @@ export default function HeroSection() {
             boxShadow: "0 4px 28px rgba(0,0,0,0.35)",
           }}
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#666"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
+          <button type="submit" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#666"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </button>
           <input
             type="text"
             placeholder="Search for sarees, kurtas, lehengas..."
@@ -240,7 +253,7 @@ export default function HeroSection() {
               fontFamily: "inherit",
             }}
           />
-        </div>
+        </form>
 
         {/* Dot indicators */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 20 }}>

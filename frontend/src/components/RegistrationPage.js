@@ -269,16 +269,16 @@ const modalOverlay = {
 };
 
 const container = {
-  maxWidth: 240,
+  maxWidth: 400,
   margin: "80px auto",
-  padding: 24,
-  background: "rgba(255, 255, 255, 0.84)",
-  backdropFilter: "blur(6px)",
-  WebkitBackdropFilter: "blur(6px)",
-  border: "1px solid #ddd",
-  borderRadius: 12,
+  padding: 32,
+  background: "rgba(255, 255, 255, 0.95)",
+  backdropFilter: "blur(10px)",
+  WebkitBackdropFilter: "blur(10px)",
+  border: "1px solid #e5e7eb",
+  borderRadius: 16,
   textAlign: "center",
-  boxShadow: "2px 2px 10px rgba(0,0,0,0.08)",
+  boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
 };
 
 const modalContainer = {
@@ -286,7 +286,8 @@ const modalContainer = {
   position: "relative",
   margin: 0,
   width: "100%",
-  maxWidth: 360,
+  maxWidth: 420,
+  padding: 28,
 };
 
 const closeButton = {
@@ -304,66 +305,89 @@ const closeButton = {
 
 const phoneWrapper = {
   display: "flex",
-  gap: 8,
-  marginBottom: 12,
+  gap: 10,
+  marginBottom: 14,
 };
 
 const otpWrapper = {
   display: "flex",
-  gap: 8,
-  marginBottom: 12,
+  gap: 10,
+  marginBottom: 14,
 };
 
 const countrySelect = {
-  width: "40%",
-  padding: 10,
-  borderRadius: 6,
-  border: "1px solid #ccc",
+  flex: "0 0 90px",
+  width: 90,
+  padding: 12,
+  borderRadius: 8,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  backgroundColor: "#f9fafb",
+  cursor: "pointer",
 };
 
 const phoneInput = {
-  width: "53%",
-  padding: 10,
-  borderRadius: 6,
-  border: "1px solid #ccc",
+  flex: 1,
+  padding: 12,
+  borderRadius: 8,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  outline: "none",
+  transition: "border-color 0.2s",
 };
 
 const otpInput = {
-  width: "53%",
-  padding: 10,
-  borderRadius: 6,
-  border: "1px solid #ccc",
+  flex: 1,
+  padding: 12,
+  borderRadius: 8,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  outline: "none",
+  transition: "border-color 0.2s",
 };
 
 const input = {
-  width: "91%",
-  padding: 10,
-  marginBottom: 12,
-  borderRadius: 6,
-  border: "1px solid #ccc",
+  width: "100%",
+  padding: 12,
+  marginBottom: 14,
+  borderRadius: 8,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  outline: "none",
+  transition: "border-color 0.2s, box-shadow 0.2s",
+  boxSizing: "border-box",
 };
 
 const loginButton = {
   width: "100%",
-  padding: 10,
+  padding: 14,
   background: "#000",
   color: "#fff",
   border: "none",
-  borderRadius: 8,
+  borderRadius: 10,
   cursor: "pointer",
   fontWeight: "600",
+  fontSize: 15,
+  marginTop: 6,
+  transition: "background 0.2s, transform 0.1s",
 };
 
 const otpButton = {
-  width: "50%",
-  padding: 10,
-  background: "#000",
+  flex: "0 0 120px",
+  width: 120,
+  padding: 12,
+  background: "#1f2937",
   color: "#fff",
   border: "none",
   borderRadius: 8,
+  fontWeight: "500",
+  fontSize: 13,
+  whiteSpace: "nowrap",
 };
 
 const link = {
-  color: "blue",
+  color: "#2563eb",
   cursor: "pointer",
+  fontWeight: "500",
+  textDecoration: "underline",
 };

@@ -36,7 +36,6 @@ export default function SupplierLayout({ children }) {
       <header style={styles.banner}>
         <div style={styles.bannerBrand}>
           <img src="/icons/Logo.png" alt="Bursana" style={styles.bannerImage} />
-          <span style={styles.bannerText}>BURSANA</span>
         </div>
 
         <div style={styles.bannerActions}>
@@ -103,7 +102,7 @@ const styles = {
     gap: "8px",
   },
   bannerImage: {
-    width: "80px",
+    width: "100px",
     height: "auto",
   },
   bannerText: {

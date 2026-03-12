@@ -3,7 +3,7 @@ import { useState } from "react";
 import LoginForm from "../components/LoginForm";
 import { loginUser } from "../hooks/useAuth";
 
-export default function LoginPage({ role = "customer", asModal = false, onClose }) {
+export default function LoginPage({ role = "customer", asModal = false, onClose, goToRegister }) {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -70,16 +70,16 @@ export default function LoginPage({ role = "customer", asModal = false, onClose 
         onClick={onClose}
       >
         <div
-          style={{
-            background: "white",
-            borderRadius: "12px",
-            width: "420px",
-            padding: "40px",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-            position: "relative",
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
+        style={{
+          background: "white",
+          borderRadius: "16px",
+          width: "420px",
+          padding: "28px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+          position: "relative",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
           <button
             onClick={onClose}
             style={{
@@ -106,6 +106,18 @@ export default function LoginPage({ role = "customer", asModal = false, onClose 
           </div>
 
           <LoginForm onSubmit={handleLogin} loading={loading} />
+
+          {goToRegister && (
+            <p style={{ textAlign: "center", marginTop: "16px", color: "#6b7280" }}>
+              Don't have an account?{" "}
+              <span
+                style={{ color: "#2563eb", cursor: "pointer", fontWeight: "500" }}
+                onClick={goToRegister}
+              >
+                Register
+              </span>
+            </p>
+          )}
 
         </div>
       </div>

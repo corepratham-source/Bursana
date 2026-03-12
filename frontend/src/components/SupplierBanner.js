@@ -15,7 +15,6 @@ export default function SupplierBanner({
     <header style={styles.header}>
         <div style={styles.brand}>
             <img src={logoSrc} alt="Bursana" style={styles.brandImage} />
-            <span style={styles.brandText}>BURSANA</span>
         </div>
 
       <div style={styles.headerActions}>
