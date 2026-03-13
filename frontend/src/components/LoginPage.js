@@ -65,7 +65,7 @@ export default function LoginPage({ role = "customer", asModal = false, onClose,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          zIndex: 1000,
+          zIndex: 9999999,
         }}
         onClick={onClose}
       >
