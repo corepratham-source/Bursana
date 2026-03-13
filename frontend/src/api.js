@@ -1,50 +1,55 @@
 import axios from "axios";
 
+/**
+ * Axios instance
+ */
 const api = axios.create({
   baseURL: "https://bursana-backend-production.up.railway.app",
-  withCredentials: true, // Important: allows cookies to be sent
+  withCredentials: true, // REQUIRED for cookies + CSRF
 });
 
-// Request interceptor adds Authorization header AND sets token as cookie
-api.interceptors.request.use(
-  (config) => {
-    // Get token from localStorage
-    const token = localStorage.getItem("token");
-    
-    if (token) {
-      // Send in Authorization header
-      config.headers["Authorization"] = `Bearer ${token}`;
-      
-      // Also set as cookie for backend (backend expects req.cookies?.token)
-      // Note: We can't directly set cookies from frontend for cross-origin
-      // So we rely on the Authorization header and need to modify backend
-    }
+/**
+ * Cached CSRF token
+ */
+let csrfToken = null;
 
-    // Remove CSRF headers to avoid preflight OPTIONS requests
-    delete config.headers["X-CSRF-Token"];
-    delete config.headers["x-csrf-token"];
+/**
+ * REQUEST INTERCEPTOR
+ * - Automatically fetches CSRF token
+ * - Attaches it ONLY to state-changing requests
+ */
+api.interceptors.request.use(
+  async (config) => {
+    const method = config.method?.toLowerCase();
+
+    // Only protect state-changing requests
+    if (["post", "put", "delete", "patch"].includes(method)) {
+      if (!csrfToken) {
+        const res = await api.get("/csrf/token");
+        csrfToken = res.data.csrfToken;
+      }
+
+      config.headers["X-CSRF-Token"] = csrfToken;
+    }
 
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor
+/**
+ * RESPONSE INTERCEPTOR
+ * - Clears CSRF token if server rejects it
+ * - Allows auto re-fetch on next request
+ */
 api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 403) {
+      csrfToken = null;
+    }
+    return Promise.reject(error);
+  }
 );
-
-// Helper function to set token as cookie (called after login)
-export const setTokenCookie = (token) => {
-  // This won't work for cross-origin, but we keep the token in localStorage
-  // The backend needs to be updated to check Authorization header
-  localStorage.setItem("token", token);
-};
-
-// Helper function to clear token
-export const clearToken = () => {
-  localStorage.removeItem("token");
-};
 
 export default api;
