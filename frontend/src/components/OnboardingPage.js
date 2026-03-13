@@ -6,7 +6,7 @@ export default function OnboardingPage({ goToLogin = () => {} }) {
   const { showAlert } = useAlert();
   const [loading, setLoading] = useState(false);
 
-  /* ================= ADDRESS ================= */
+  /* ADDRESS */
   const [address, setAddress] = useState({
     full_name: "",
     phone: "",
