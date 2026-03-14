@@ -10,8 +10,6 @@ export default function CartPage() {
   const { showAlert } = useAlert();
   const { showMessage } = useAlert();
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [hoveringBurger, setHoveringBurger] = useState(false);
   const [cartItems, setCartItems] = useState([]);
    const [isLoading, setIsLoading] = useState(true);
   const [animationCycle, setAnimationCycle] = useState(0);
@@ -85,8 +83,6 @@ export default function CartPage() {
       navigate("/");
       return;
     }
-
-    setSidebarOpen(false);
     fetchCart();
     socket.on("cartUpdated", setCartItems);
     return () => socket.off("cartUpdated");
@@ -162,79 +158,11 @@ export default function CartPage() {
           100% { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      {/* ================= SIDEBAR ================= */}
-      <div
-          style={{
-            ...styles.sidebar,
-            width: sidebarOpen ? 170 : 48,
-            background:
-              !sidebarOpen
-                ? "transparent"
-                : "rgba(250, 250, 250, 0.35)",
-            backdropFilter:
-              !sidebarOpen ? "none" : "blur(2px)",
-          }}
-        >
-        <button
-          onClick={() => setSidebarOpen((p) => !p)}
-          onMouseEnter={() => setHoveringBurger(true)}
-          onMouseLeave={() => setHoveringBurger(false)}
-          style={{
-            ...styles.burgerBtn,
-            transform: hoveringBurger ? "scale(1.08)" : "scale(1)",
-          }}
-        >
-          <span
-            style={{
-              ...styles.bar,
-              backgroundColor: sidebarOpen ? "#d32f2f" : "#000",
-              transform: sidebarOpen
-                ? "rotate(45deg) translate(3px, 3px)"
-                : "rotate(0)",
-            }}
-          />
-          <span
-            style={{
-              ...styles.bar,
-              backgroundColor: sidebarOpen ? "#d32f2f" : "#000",
-              opacity: sidebarOpen ? 0 : 1,
-            }}
-          />
-          <span
-            style={{
-              ...styles.bar,
-              backgroundColor: sidebarOpen ? "#d32f2f" : "#000",
-              transform: sidebarOpen
-                ? "rotate(-45deg) translate(3px, -3px)"
-                : "rotate(0)",
-            }}
-          />
-        </button>
-
-        {sidebarOpen && (
-          <>
-            <button
-              style={styles.sidebarButton}
-              onClick={() => navigate("/cart")}
-            >
-              Cart
-            </button>
-            <button
-              style={styles.sidebarButton}
-              onClick={() => navigate("/orders")}
-            >
-              Orders
-            </button>
-          </>
-        )}
-      </div>
 
       {/* ================= MAIN ================= */}
       <div style={mainStyle}>
         {/* CART */}
         <div style={cartContainerStyle}>
-          <h2 style={{ marginBottom: 10 }}>Your Cart</h2>
-
           <div style={styles.cartScrollArea}>
             {isLoading &&
               Array.from({ length: 4 }).map((_, index) => (
