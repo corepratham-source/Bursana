@@ -19,10 +19,10 @@ import SupplierLayout from "../components/SupplierLayout";
 import ProductIngestion from "../components/ProductIngestion";
 import ProductManagePage from "../components/ProductManagePage";
 
-import TermsAndConditionsPage from "./TermsAndConditionsPage";
-import RefundPolicyPage from "./RefundPolicyPage";
-import ShippingPolicyPage from "./ShippingPolicyPage";
-import PrivacyPolicyPage from "./PrivacyPolicyPage";
+import TermsAndConditionsPage from "../components/TermsAndConditionsPage";
+import RefundPolicyPage from "../components/RefundPolicyPage";
+import ShippingPolicyPage from "../components/ShippingPolicyPage";
+import PrivacyPolicyPage from "../components/PrivacyPolicyPage";
 import SearchResultsPage from "./SearchResultsPage";
 
 import api from "../api";
