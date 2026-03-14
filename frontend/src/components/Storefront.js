@@ -49,6 +49,22 @@ export default function Storefront(props) {
   }, []);
 
   useEffect(() => {
+  if (showCarousel) {
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
+  } else {
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
+  }
+
+  return () => {
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
+  };
+}, [showCarousel]);
+
+  useEffect(() => {
     const fetchData = async () => {
       const loadStart = Date.now();
       try {
