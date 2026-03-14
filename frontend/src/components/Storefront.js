@@ -898,12 +898,17 @@ const styles = {
     gap: 12,
     overflowY: "auto",
   },
-  previewStripMobile: {
-    flex: "0 0 70px",
+  previewStripMobile: { 
+    flex: "0 0 72px",
+    height: "100%",
+    minHeight: 0,
     display: "flex",
-    flexDirection: "row",
-    gap: 8,
-    overflowX: "auto",
+    flexDirection: "column",
+    gap: 10,
+    overflowY: "auto",
+    overflowX: "hidden",
+    paddingRight: 4,
+    alignSelf: "stretch",
   },
   previewThumb: {
     width: "100%",
@@ -928,7 +933,7 @@ const styles = {
     justifyContent: "center",
   },
   mainImageWrapMobile: {
-    width: "100%",
+    width: "78%",
     aspectRatio: "3/4",
     position: "relative",
     display: "flex",
