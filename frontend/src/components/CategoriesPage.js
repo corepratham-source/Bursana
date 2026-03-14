@@ -121,7 +121,7 @@ export default function CategoriesPage() {
             onClick={() => setSelectedCategory(category)}
             style={{
               padding: "10px 20px",
-              borderRadius: "8px",
+              borderRadius: "30px",
               border: "none",
               background: selectedCategory === category ? "linear-gradient(to right, #6A8DFF, #9D7BFF)" : "#f5f5f5",
               color: selectedCategory === category ? "#fff" : "#555",
