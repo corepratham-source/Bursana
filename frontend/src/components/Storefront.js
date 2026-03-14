@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import api from "../api";
 import { socket } from "../socket";
 import useAlert from "../hooks/useAlert";
@@ -9,8 +9,6 @@ import ProductCard from "./ProductCard";
 
 export default function Storefront(props) {
   const { showAlert } = useAlert();
-  const navigate = useNavigate();
-  
   // Get context - may be null if not available
   const context = useOutletContext() || {};
   
@@ -20,15 +18,9 @@ export default function Storefront(props) {
     requireLogin = () => {},
     handleUnauthorized = () => {},
   } = context;
-  
-  // If props are passed directly, use those instead
-  const actualRefreshCartCount = props?.refreshCartCount || refreshCartCount;
-  const actualIsAuthenticated = props?.isAuthenticated !== undefined ? props.isAuthenticated : isAuthenticated;
-  const actualRequireLogin = props?.requireLogin || requireLogin;
-  const actualHandleUnauthorized = props?.handleUnauthorized || handleUnauthorized;
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
 
+  // If props are passed directly, use those instead
+  const [isMobile, setIsMobile] = useState(false);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
@@ -50,7 +42,6 @@ export default function Storefront(props) {
   useEffect(() => {
     const checkDevice = () => {
       setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
     };
     checkDevice();
     window.addEventListener('resize', checkDevice);
@@ -491,7 +482,7 @@ export default function Storefront(props) {
               style={styles.carouselCloseBtn}
               aria-label="Close"
             >
-              <svg viewBox="0 0 24 24" style={styles.carouselCloseIcon}>
+              <svg viewBox="0 0 24 24" style={isMobile ? styles.carouselCloseIconMobile : styles.carouselCloseIcon}>
                 <path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
@@ -876,6 +867,10 @@ const styles = {
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
   },
   carouselCloseIcon: {
+    width: 20,
+    height: 20,
+  },
+  carouselCloseIconMobile: {
     width: 20,
     height: 20,
   },
