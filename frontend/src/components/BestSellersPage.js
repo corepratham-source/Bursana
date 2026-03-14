@@ -112,7 +112,7 @@ export default function BestSellersPage() {
                 product={product}
                 cardImage={Array.isArray(product.images) ? product.images[0] : product.images}
                 index={0}
-                styles={{}}
+                styles={styles}
                 addToCart={() => addToCart(product.id)}
                 isInWishlist={wishlistItems.includes(product.id)}
                 onToggleWishlist={(e) => handleToggleWishlist(product.id, e)}
@@ -128,4 +128,77 @@ export default function BestSellersPage() {
       )}
     </div>
   );
+}
+const styles = {
+  card: {
+    background: "#fff",
+    borderRadius: 16,
+    boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    transition: "transform 0.2s, box-shadow 0.2s",
+    cursor: "pointer",
+  },
+  cardEnter: {
+    animation: "storefrontCardIn 560ms ease both",
+  },
+  cardOpening: {
+    animation: "storefrontCardClickOpen 180ms ease forwards",
+    transformOrigin: "center center",
+  },
+productName: {
+    margin: 0,
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#222",
+    lineHeight: 1.3,
+    minHeight: "2.6em",
+    display: "-webkit-box",
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+  },
+  priceRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: "auto",
+  },
+  price: {
+    margin: 0,
+    fontSize: 16,
+    fontWeight: 600,
+    color: "#1a1a1a",
+  },
+  addButton: {
+    padding: "8px 16px",
+    background: "linear-gradient(to right, #6A8DFF, #9D7BFF)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "20px",
+    fontSize: 13,
+    fontWeight: 500,
+    cursor: "pointer",
+    transition: "opacity 0.2s",
+  },
+imageFrame: {
+    width: "100%",
+    aspectRatio: "3 / 4",
+    background: "#f5f5f5",
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    cursor: "pointer",
+    transition: "transform 0.3s",
+  },
+  cardContent: {
+    padding: 16,
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
+  },
 }
