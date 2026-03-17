@@ -24,7 +24,7 @@ export default function HeroSection() {
       try {
         // Using the existing products endpoint from the backend
         // This endpoint returns products with images from the database (Cloudinary)
-        const response = await api.get("/products/hero");
+        const response = await api.get("/products");
         
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           // Extract images from products
