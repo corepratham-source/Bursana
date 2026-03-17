@@ -121,6 +121,7 @@ export default function CartPage() {
     width: isMobile ? "95%" : "auto",
     maxWidth: isMobile ? 420 : "none",
     height: isMobile ? "auto" : 300,
+
   };
 
   const cartItemStyle = {
@@ -455,6 +456,7 @@ const styles = {
     border: "1px solid #ddd",
     padding: 20,
     boxShadow: "0px 10px 25px rgba(0,0,0,0.25)",
+    
   },
 
   placeOrderBtn: {
