@@ -46,7 +46,7 @@ export default function HeroSection() {
             }
           });
 
-          if (images.length > 0) {
+          if (images.length > 3) {
             setBannerImages(images);
             setHasImages(true);
           }

@@ -14,21 +14,7 @@ export default function ProductCard({
   onToggleWishlist = () => {},
 }) {
   if (!product) return null;
-
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    if (addToCart) {
-      addToCart(product.id);
-    }
-  };
-
-  const handleToggleWishlist = (e) => {
-    e.stopPropagation();
-    if (onToggleWishlist) {
-      onToggleWishlist(e);
-    }
-  };
-
+  
   const baseCardStyle = {
     ...styles.card,
     ...styles.cardEnter,

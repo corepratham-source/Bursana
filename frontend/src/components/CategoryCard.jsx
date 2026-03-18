@@ -4,6 +4,7 @@ export default function CategoryCard({
   image,
   buttonLabel,
   styles,
+  setSelectedCategory = () => {},
 }) {
   return (
     <div style={styles.categoryCard} className="category-card">
@@ -22,7 +23,9 @@ export default function CategoryCard({
         {description && (
           <p style={styles.categoryDescription}>{description}</p>
         )}
-        <button style={styles.categoryButton}>{buttonLabel}</button>
+        <button style={styles.categoryButton} onClick={() => setSelectedCategory(title)}>
+          {buttonLabel}
+        </button>
       </div>
     </div>
   );

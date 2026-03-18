@@ -400,6 +400,7 @@ export default function Storefront(props) {
                 description={cat.description}
                 image={cat.image}
                 buttonLabel={cat.button}
+                setSelectedCategory={setSelectedCategory}
                 styles={styles}
               />
             ))}
