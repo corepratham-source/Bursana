@@ -740,7 +740,7 @@ const styles = {
     gap: 20,
   },
   card: {
-    width: "20vw",
+    width: "25vw",
     background: "#fff",
     borderRadius: 16,
     boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
