@@ -734,12 +734,13 @@ const styles = {
     marginBottom: 32,
   },
   grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: 20,
+    display: "flex",
+    flexWrap: "wrap",
     justifyContent: "center",
+    gap: 20,
   },
   card: {
+    width: "20vw",
     background: "#fff",
     borderRadius: 16,
     boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
