@@ -735,9 +735,8 @@ const styles = {
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(4, 280px)", // fixed width cards
+    gridTemplateColumns: "repeat(4, 1fr)",
     gap: 20,
-    justifyContent: "center", // THIS centers the grid
   },
   card: {
     background: "#fff",
