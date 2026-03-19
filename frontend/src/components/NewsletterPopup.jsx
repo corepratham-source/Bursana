@@ -21,12 +21,12 @@ export default function NewsletterPopup() {
             withCredentials: false,
         }
       );
-      showAlert("Subscribed successfully!");
+      showAlert("Subscribed successfully!","success");
       setEmail("");
       setOpen(false);
     } catch (err) {
       console.error(err);
-      showAlert("Something went wrong");
+      showAlert("Something went wrong","error");
     } finally {
       setLoading(false);
     }
