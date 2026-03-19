@@ -6,6 +6,7 @@ import useAlert from "../hooks/useAlert";
 import HeroSection from "./HeroSection";
 import CategoryCard from "./CategoryCard";
 import ProductCard from "./ProductCard";
+import NewsletterPopup from "./NewsletterPopup";
 
 export default function Storefront(props) {
   const { showAlert } = useAlert();
@@ -38,7 +39,10 @@ export default function Storefront(props) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const hoverIntervalsRef = useRef({});
   const openCarouselTimeoutRef = useRef(null);
-
+  const cardDeriv ={
+    ...styles.card,
+    width : isMobile ? "80vw" : "21vw",
+  }
   useEffect(() => {
     const checkDevice = () => {
       setIsMobile(window.innerWidth < 768);
@@ -446,7 +450,7 @@ export default function Storefront(props) {
                   <article
                     key={`skeleton-${index}`}
                     style={{
-                      ...styles.card,
+                      ...cardDeriv,
                       ...styles.skeletonCard,
                       animationDelay: `${index * 100}ms`,
                     }}
@@ -471,7 +475,7 @@ export default function Storefront(props) {
                       cardImage={cardImage}
                       index={index}
                       isOpening={openingProductId === String(product.id)}
-                      styles={styles}
+                      styles={{ ...styles, card: cardDeriv }}
                       addToCart={addToCart}
                       openCarousel={openCarousel}
                       startCardImageScroll={startCardImageScroll}
@@ -554,6 +558,7 @@ export default function Storefront(props) {
           </div>
         </div>
       )}
+      <NewsletterPopup />
     </div>
   );
 }
@@ -740,7 +745,6 @@ const styles = {
     gap: 20,
   },
   card: {
-    width: "21vw",
     background: "#fff",
     borderRadius: 16,
     boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
@@ -749,6 +753,8 @@ const styles = {
     flexDirection: "column",
     transition: "transform 0.2s, box-shadow 0.2s",
     cursor: "pointer",
+    width: "21vw",
+    maxWidth: "500px",
   },
   cardEnter: {
     animation: "storefrontCardIn 560ms ease both",
