@@ -11,7 +11,14 @@ export default function NewsletterPopup() {
 
     try {
       setLoading(true);
-      await api.post("/newsletter/subscribe", { email });
+      await api.post("newsletter/subscribe",{ email },
+        {
+            headers: {
+            "Content-Type": "application/json",
+            },
+            withCredentials: false,
+        }
+      );
       alert("Subscribed successfully!");
       setEmail("");
       setOpen(false);
