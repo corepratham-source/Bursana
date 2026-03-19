@@ -1,10 +1,12 @@
 import { useState } from "react";
 import api from "../api";
+import useAlert from "../hooks/useAlert";
 
 export default function NewsletterPopup() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const { showAlert } = useAlert();
 
   const handleSubmit = async () => {
     if (!email) return;
@@ -19,12 +21,12 @@ export default function NewsletterPopup() {
             withCredentials: false,
         }
       );
-      alert("Subscribed successfully!");
+      showAlert("Subscribed successfully!");
       setEmail("");
       setOpen(false);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong");
+      showAlert("Something went wrong");
     } finally {
       setLoading(false);
     }
