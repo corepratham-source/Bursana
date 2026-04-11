@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import api from "../api";
 import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
 export default function BestSellersPage() {
   // Get context - may be null if not available
@@ -16,6 +17,7 @@ export default function BestSellersPage() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [wishlistItems, setWishlistItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,6 +118,7 @@ export default function BestSellersPage() {
                 addToCart={() => addToCart(product.id)}
                 isInWishlist={wishlistItems.includes(product.id)}
                 onToggleWishlist={(e) => handleToggleWishlist(product.id, e)}
+                onClick={() => navigate(`/product/${product.category.toLowerCase()}/${product.id}`)}
               />
             ))
         }

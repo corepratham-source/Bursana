@@ -24,7 +24,7 @@ export default function HeroSection() {
       try {
         // Using the existing products endpoint from the backend
         // This endpoint returns products with images from the database (Cloudinary)
-        const response = await api.get("/products");
+        const response = await api.get("/products/hero-products");
         
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           // Extract images from products
@@ -64,23 +64,22 @@ export default function HeroSection() {
 
   // Create slides from dynamic banner images
   const getSlides = () => {
-    if (!hasImages || bannerImages.length === 0) {
-      // Return empty slides when no images available - will show placeholder
-      return [];
-    }
+  if (!hasImages || bannerImages.length < 3) return [];
 
-    // Create slides from banner images (3 images per slide)
-    const slides = [];
-    for (let i = 0; i < bannerImages.length; i += 3) {
+  const slides = [];
+
+  for (let i = 0; i < bannerImages.length; i += 3) {
+    if (bannerImages[i + 2]) { // ✅ only full sets of 3
       slides.push({
-        left: bannerImages[i] || null,
-        center: bannerImages[i + 1] || null,
-        right: bannerImages[i + 2] || null,
+        left: bannerImages[i],
+        center: bannerImages[i + 1],
+        right: bannerImages[i + 2],
       });
     }
+  }
 
-    return slides;
-  };
+  return slides;
+};
 
   const slides = getSlides();
 

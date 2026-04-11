@@ -4,12 +4,11 @@ import api from "../api";
 import { socket } from "../socket";
 import useAlert from "../hooks/useAlert";
 import HeroSection from "./HeroSection";
-import CategoryCard from "./CategoryCard";
 import ProductCard from "./ProductCard";
 import NewsletterPopup from "./NewsletterPopup";
 import { useNavigate } from "react-router-dom";
 
-export default function Storefront(props) {
+export default function CODAvailable(props) {
   const { showAlert } = useAlert();
   // Get context - may be null if not available
   const context = useOutletContext() || {};
@@ -27,7 +26,6 @@ export default function Storefront(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
   const [animationCycle, setAnimationCycle] = useState(0);
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const hasFetched = useRef(false);
   const hasFinishedInitialLoad = useRef(false);
@@ -77,13 +75,11 @@ export default function Storefront(props) {
       if (hasFetched.current) return;
       hasFetched.current = true;
       try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          api.get("/products"),
-          api.get("/products/categories"),
+        const [productsRes] = await Promise.all([
+          api.get("/products/cod"),
         ]);
 
         setProducts(productsRes.data || []);
-        setCategories(categoriesRes.data || []);
       } catch {
         showAlert("Failed to load storefront data", "error");
       } finally {
@@ -198,22 +194,23 @@ export default function Storefront(props) {
 
   const addToCart = async (productId) => {
     if (!isAuthenticated) {
-      requireLogin?.();
-      return;
+        requireLogin?.();
+        return;
     }
 
     try {
-      await api.post("/cart/add", { product_id: productId });
-      await refreshCartCount?.();
-      showAlert("Added to cart", "success");
+        await api.post("/cart/add", { product_id: productId });
+        await refreshCartCount?.();
+        showAlert("Added to cart", "success");
     } catch (err) {
-      if (err?.response?.status === 401) {
+        if (err?.response?.status === 401) {
         handleUnauthorized?.();
         return;
-      }
-      showAlert("Failed to add to cart", "error");
+        }
+        showAlert("Failed to add to cart", "error");
     }
-  };
+};
+
 
   const nextImage = () =>
     setCarouselIndex((prev) => (prev + 1) % carouselImages.length);
@@ -227,30 +224,30 @@ export default function Storefront(props) {
     const productImages = Array.isArray(product.images) ? product.images : [];
     if (productImages.length <= 1) return;
 
-    const productId = String(product.id);
+    const productId = String(product.product_id);
     if (hoverIntervalsRef.current[productId]) return;
 
     hoverIntervalsRef.current[productId] = setInterval(() => {
-      setHoveredImageIndexes((prev) => ({
+        setHoveredImageIndexes((prev) => ({
         ...prev,
         [productId]: ((prev[productId] ?? 0) + 1) % productImages.length,
-      }));
+        }));
     }, 1000);
-  };
+    };
 
-  const stopCardImageScroll = (productId) => {
+    const stopCardImageScroll = (productId) => {
     const productIdKey = String(productId);
     const interval = hoverIntervalsRef.current[productIdKey];
     if (interval) {
-      clearInterval(interval);
-      delete hoverIntervalsRef.current[productIdKey];
+        clearInterval(interval);
+        delete hoverIntervalsRef.current[productIdKey];
     }
 
     setHoveredImageIndexes((prev) => {
-      if (prev[productIdKey] == null) return prev;
-      return { ...prev, [productIdKey]: 0 };
+        if (prev[productIdKey] == null) return prev;
+        return { ...prev, [productIdKey]: 0 };
     });
-  };
+    };
 
   useEffect(() => {
     return () => {
@@ -262,32 +259,6 @@ export default function Storefront(props) {
       }
     };
   }, []);
-
-  // Build category cards dynamically from products
-  const categoryCards = useMemo(() => {
-    if (categories.length === 0) return [];
-    
-    return categories.slice(0, 3).map((cat) => {
-      // Find first product in this category to get image
-      const productInCategory = products.find(p => (p.category || '').toLowerCase() === cat.toLowerCase());
-      let image = "/icons/1.jpeg";
-      
-      if (productInCategory?.images) {
-        if (Array.isArray(productInCategory.images) && productInCategory.images.length > 0) {
-          image = productInCategory.images[0];
-        } else if (typeof productInCategory.images === 'string') {
-          image = productInCategory.images;
-        }
-      }
-      
-      return {
-        name: cat,
-        image: image,
-        description: `Shop our collection of ${cat.toLowerCase()}`,
-        button: `Shop ${cat}`,
-      };
-    });
-  }, [categories, products]);
 
   return (
     <div style={styles.page}>
@@ -377,55 +348,10 @@ export default function Storefront(props) {
         {/* Hero Banner Section */}
         <HeroSection />
 
-        {/* Category Cards Section */}
-        {categoryCards.length > 0 && (
-        <section style={styles.categorySection} id="categories">
-          <div style={styles.categoryGrid} className="category-grid">
-            {categoryCards.map((cat) => (
-              <CategoryCard
-                key={cat.name}
-                title={cat.name}
-                description={cat.description}
-                image={cat.image}
-                buttonLabel={cat.button}
-                setSelectedCategory={setSelectedCategory}
-                styles={styles}
-              />
-            ))}
-          </div>
-        </section>
-        )}
-
         {/* Products Section */}
         <section style={styles.productsSection} id="bestsellers">
-          <h2 style={styles.sectionTitle}>Our Collection</h2>
-          
-          {/* Category Tabs */}
-          <div style={styles.tabs}>
-            <button
-              onClick={() => setSelectedCategory("ALL")}
-              style={{
-                ...tabStyle(selectedCategory === "ALL"),
-                backgroundColor: selectedCategory === "ALL" ? "linear-gradient(to right, #6A8DFF, #9D7BFF)" : "transparent",
-                color: selectedCategory === "ALL" ? "#fff" : "#555",
-              }}
-            >
-              <span style={{ fontWeight: 500 }}>All</span>
-            </button>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                style={{
-                  ...tabStyle(selectedCategory === category),
-                  backgroundColor: selectedCategory === category ? "linear-gradient(to right, #6A8DFF, #9D7BFF)" : "transparent",
-                  color: selectedCategory === category ? "#fff" : "#555",
-                }}
-              >
-                <span style={{ fontWeight: 500 }}>{category}</span>
-              </button>
-            ))}
-          </div>
+          <h2 style={styles.sectionTitle}>Our COD available pieces</h2>
+          <h2 style={styles.sectionTitleAlt}>Only in Kolkata</h2>
 
           {/* Product Grid */}
           <div style={styles.grid} className="product-grid">
@@ -448,28 +374,33 @@ export default function Storefront(props) {
                   </article>
                 ))
               : filteredProducts.map((product, index) => {
-                  const productImages = Array.isArray(product.images) ? product.images : [];
-                  const imageIndex = hoveredImageIndexes[String(product.id)] ?? 0;
-                  const cardImage = productImages[imageIndex];
+                const productImages = Array.isArray(product.images) ? product.images : [];
+                const pid = String(product.product_id);
 
-                  return (
+                const imageIndex = hoveredImageIndexes[pid] ?? 0;
+                const cardImage = productImages[imageIndex];
+
+                return (
                     <ProductCard
-                      key={`${product.id}-${animationCycle}`}
-                      product={product}
-                      cardImage={cardImage}
-                      index={index}
-                      isOpening={openingProductId === String(product.id)}
-                      styles={{ ...styles, card: cardDeriv }}
-                      addToCart={addToCart}
-                      startCardImageScroll={startCardImageScroll}
-                      stopCardImageScroll={stopCardImageScroll}
-                      hoveredImageIndex={imageIndex}
-                      isInWishlist={wishlistItems.includes(product.id)}
-                      onToggleWishlist={handleToggleWishlist}
-                      onClick={() => navigate(`/product/${product.category.toLowerCase()}/${product.id}`)}
+                        key={`${product.product_id}-${animationCycle}`}
+                        product={product}
+                        cardImage={cardImage}
+                        index={index}
+                        isOpening={openingProductId === pid}
+                        styles={{ ...styles, card: cardDeriv }}
+                        addToCart={addToCart}
+                        startCardImageScroll={(p) => startCardImageScroll({ ...p, id: p.product_id })}
+                        stopCardImageScroll={(id) => stopCardImageScroll(id)}
+                        hoveredImageIndex={imageIndex}
+                        isInWishlist={wishlistItems.includes(product.product_id)}
+                        onToggleWishlist={handleToggleWishlist}
+                        onClick={() =>
+                            navigate(`/product/${product.category.toLowerCase()}/${product.product_id}`)
+                        }
                     />
-                  );
-                })}
+                );
+                })
+            }
           </div>
         </section>
       </main>
@@ -536,7 +467,7 @@ export default function Storefront(props) {
               </div>
               <div style={isMobile ? styles.rightBottomMobile : styles.rightBottom}>
                 <span style={styles.modalPrice}>₹{parseFloat(selectedProduct?.total_price || 0).toLocaleString('en-IN')}</span>
-                <button style={styles.modalAddButton} onClick={() => addToCart(selectedProduct?.id)}>Add To Cart</button>
+                <button style={styles.modalAddButton} onClick={() => addToCart(selectedProduct?.product_id)}>Add To Cart</button>
               </div>
             </div>
           </div>
@@ -711,6 +642,14 @@ const styles = {
     textAlign: "center",
     fontSize: "clamp(24px, 4vw, 36px)",
     fontWeight: 600,
+    marginBottom: 24,
+    fontFamily: "Georgia, serif",
+    color: "#1a1a1a",
+  },
+  sectionTitleAlt: {
+    textAlign: "center",
+    fontSize: "clamp(18px, 2vw, 28px)",
+    fontWeight: 500,
     marginBottom: 24,
     fontFamily: "Georgia, serif",
     color: "#1a1a1a",

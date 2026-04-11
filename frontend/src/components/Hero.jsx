@@ -12,7 +12,7 @@ export default function Hero() {
   useEffect(() => {
     const fetchHeroImage = async () => {
       try {
-        const response = await api.get("/products/hero");
+        const response = await api.get("/products/hero-products");
         
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           // Get the first product's first image as hero image

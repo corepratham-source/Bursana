@@ -41,6 +41,7 @@ export default function CustomerBanner({ bannerLogoUrl, cartCount = 0, wishlistC
     { label: "Home", to: "/" },
     { label: "Categories", to: "/categories" },
     { label: "Best Sellers", to: "/best-sellers" },
+    { label: "COD Available", to: "/cod" }
   ];
 
   // Multicolour BURSANA exactly as in image

@@ -66,41 +66,4 @@ router.get("/categories", async (req, res) => {
   }
 });
 
-// ✅ SEARCH PRODUCTS
-router.get("/search", async (req, res) => {
-  try {
-    const { q } = req.query;
-    const userId = req.user?.id;
-    const maxPrice = await getMaxPriceForUser(userId);
-    
-    if (!q || q.trim() === "") {
-      return res.json([]);
-    }
-    
-    const searchTerm = `%${q.trim()}%`;
-    const result = await pool.query(
-      `
-      SELECT p.*, s.phone_number AS supplier_phone
-      FROM products p
-      JOIN suppliers s ON p.supplier_id = s.id
-      WHERE p.active = true
-        AND p.total_price <= $1
-        AND (
-          p.name ILIKE $2
-          OR p.description ILIKE $2
-          OR p.category ILIKE $2
-        )
-      ORDER BY p.created_at DESC
-      LIMIT 50
-    `,
-      [maxPrice, searchTerm]
-    );
-
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Failed to search products:", err);
-    res.status(500).json({ error: "Failed to search products" });
-  }
-});
-
 module.exports = router;

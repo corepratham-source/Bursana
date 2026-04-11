@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import api from "../api";
 import useAlert from "../hooks/useAlert";
 
-export default function SupplierIngestionPage() {
+export default function CODIngestionPage() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -128,7 +128,7 @@ export default function SupplierIngestionPage() {
             text: "Processing image...",
           },
       ]);
-      await api.post("/ingestion/finalize", { stagingId });
+      await api.post("/ingestion/finalize-cod", { stagingId });
       setMessages(prev => [
         ...prev,
         { from: "system", text: "✅ Product Published Successfully!" },
@@ -136,22 +136,6 @@ export default function SupplierIngestionPage() {
       showAlert("Product Published 🎉", "success");
     } catch {
       showAlert("Finalize Failed");
-    }
-  };
-
-  const logout = async () => {
-    try {
-      localStorage.removeItem("user");
-      localStorage.removeItem("mode");
-      const res = await api.post("/auth/logout");
-      if (res.status === 200) {
-        showAlert("Logout successful", "success");
-        window.location.reload();
-
-      }
-    } catch (err) {
-      console.error(err);
-      showAlert("Logout failed");
     }
   };
 

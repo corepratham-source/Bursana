@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import api from "../api";
 import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
 export default function CategoriesPage() {
   const context = useOutletContext() || {};
@@ -16,6 +17,7 @@ export default function CategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [wishlistItems, setWishlistItems] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -192,6 +194,7 @@ export default function CategoriesPage() {
                 addToCart={() => addToCart(product.id)}
                 isInWishlist={wishlistItems.includes(product.id)}
                 onToggleWishlist={(e) => handleToggleWishlist(product.id, e)}
+                onClick={() => navigate(`/product/${product.category.toLowerCase()}/${product.id}`)}
               />
             ))}
       </div>

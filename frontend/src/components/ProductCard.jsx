@@ -5,16 +5,15 @@ export default function ProductCard({
   isOpening,
   styles,
   addToCart = () => {},
-  openCarousel = () => {},
   startCardImageScroll = () => {},
   stopCardImageScroll = () => {},
   hoveredImageIndex,
   variant = "light",
   isInWishlist = false,
   onToggleWishlist = () => {},
+  onClick = () => {},
 }) {
   if (!product) return null;
-  
   const baseCardStyle = {
     ...styles.card,
     ...styles.cardEnter,
@@ -120,7 +119,7 @@ export default function ProductCard({
           src={cardImage}
           alt={product.name || "Product"}
           style={styles.image}
-          onClick={() => openCarousel(product)}
+          onClick={onClick}
         />
       </div>
       <div style={styles.cardContent}>
@@ -135,7 +134,7 @@ export default function ProductCard({
             style={addButtonStyle}
             onClick={(e) => {
               e.stopPropagation();
-              addToCart(product.id);
+              addToCart(product.product_id);
             }}
           >
             Add

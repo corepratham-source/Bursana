@@ -42,6 +42,10 @@ export default function SupplierLayout({ children }) {
           <button style={styles.navButton} onClick={() => navigate("/supplier/ingest")}>
             <span>Product Ingestion</span>
           </button>
+
+          <button style={styles.navButton} onClick={() => navigate("/supplier/ingest/cod")}>
+            <span>COD Product Ingestion</span>
+          </button>
           
           <button style={styles.navButton} onClick={() => navigate("/supplier/manage")}>
             <span>Product Manage</span>
